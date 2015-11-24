@@ -329,7 +329,7 @@ function Photon(obj) {
              * @returns {object[]} Your orginizations and there info.
             */
             list: function () {
-                return $.get(this.settings.url('orgs')); // orcs?
+                return $.get(this.settings.url('orgs'), identity); // orcs?
             },
 
             /** Get an orginization via its slug (identifier).
@@ -340,7 +340,7 @@ function Photon(obj) {
             */
             get: function (slug) {
                 if (this.settings.debug) console.debug(slug);
-                return $.get(this.settings.url('orgs', slug)); // Orcs like slugs!
+                return $.get(this.settings.url('orgs', slug), identity); // Orcs like slugs!
             },
 
            /** Get an orginization via its slug (identifier).
@@ -378,7 +378,7 @@ function Photon(obj) {
                 if (this.settings.debug) console.debug(slug);
                 if (this.settings.debug) console.debug(pSlug);
 
-                return $.get(this.settings.url('orgs', slug, 'products', pSlug));
+                return $.get(this.settings.url('orgs', slug, 'products', pSlug), identity);
             },
 
            /** Generate a claim code for a product.
