@@ -22,6 +22,7 @@ function Photon(obj) {
          *  @memberof PhotonJS
         */
         settings: {
+            baseUrl: '',
             debug: obj.debug || false,
             save: function (k, v) {
                 var s = v || this[k];
@@ -66,6 +67,7 @@ function Photon(obj) {
          *  @version 0.3
         */
         authorization: {
+            settings: {},
             /** Lists the access tokens that you have
              *  @memberof PhotonJS.Authorization
              *  @method list
@@ -100,6 +102,7 @@ function Photon(obj) {
          *  @version 0.3
         */
         devices: {
+            settings: {},
             /** Lists all your known Photon or Particle boards.
              *  @memberof PhotonJS.Devices
              *  @method list
@@ -162,6 +165,7 @@ function Photon(obj) {
          *  @version 0.3
         */
         events: {
+            settings: {},
             /** Opens a stream of "Server Sent Events" for all public events and private events for your devices.
              * @memberof PhotonJS.Events
              * @method getStream
@@ -252,6 +256,7 @@ function Photon(obj) {
          * @version 0.3
         */
         firmware: {
+            settings: {},
             /** Update a board.
              * @memberof PhotonJS.Firmware
              * @method update
@@ -300,7 +305,7 @@ function Photon(obj) {
                     + 'Content-Disposition: form-data; name="file";'
                     + 'filename="code.cpp"\r\n'
                     + 'Content-type: plain/text\r\n\r\n'
-                    + data + '\r\n'
+                    + file + '\r\n'
                     + '--'+ boundary + '--';
                 if (this.settings.debug) console.debug(body);
                 if (this.settings.debug) console.debug(id);
@@ -323,6 +328,7 @@ function Photon(obj) {
          *  @version 0.3
         */
         orginizations: {
+            settings: {},
             /** List your orginizations
              * @method list
              * @memberof PhotonJS.Orginizations
@@ -367,6 +373,7 @@ function Photon(obj) {
          *  @version 0.3
         */
         products: {
+            settings: {},
             /** Get an orginization via its slug, then get a product from that orginization, using another slug.
              * @method get
              * @memberof PhotonJS.Products
@@ -414,14 +421,13 @@ function Photon(obj) {
         }
     };
 
-    self.auth.settings = Photon.settings;
-    self.devices.settings = Photon.settings;
-    self.firmware.settings = Photon.settings;
-    self.products.settings = Photon.settings;
-    self.orgs.settings = Photon.settings;
+    self.authorization.settings = self.settings;
+    self.devices.settings = self.settings;
+    self.firmware.settings = self.settings;
+    self.products.settings = self.settings;
+    self.orginizations.settings = self.settings;
     self.settings.baseUrl = 'https://api.particle.io/v' + self.settings.version;
     if (obj.debug) console.debug(self.settings.baseUrl);
 
     return self;
 }
-
