@@ -231,7 +231,7 @@ function Photon(obj) {
                     if (this.settings.debug) console.debug(JSON.stringify({ data: data,
                                                                             p: p,
                                                                             ttl: ttl }));
-                    return $.post(this.setttings.url('devices', 'events'),
+                    return $.post(this.settings.url('devices', 'events'),
                                   { data: data,
                                     p: p,
                                     ttl: ttl });
@@ -239,7 +239,7 @@ function Photon(obj) {
                     if (this.settings.debug) console.debug(JSON.stringify({ data: data,
                                                                             p: p }));
 
-                    return $.post(this.setttings.url('devices', 'events'),
+                    return $.post(this.settings.url('devices', 'events'),
                                   { data: data,
                                     p: p });
                 }
