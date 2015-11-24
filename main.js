@@ -1,3 +1,7 @@
+function identity (a) {
+    return a;
+}
+
 /**
  * Returns new Photon.JS library instance, setting it up with the given options.
  * @param {object} obj The options for the new library, including a version, access token, debug mode, name of device, and id of device (all of which you can supply later).
@@ -9,7 +13,7 @@ function Photon(obj) {
     if (obj.debug) console.debug(obj);
 
     /**
-       The Photon.JS library, a close wrapper on the Spark Photon board's REST API.
+       The Photon.JS library, a close wrapper on the Spark Photon board's REST API. Note: jQuery is a necissary requirement for this library. (although Zepto will probably also work)
        @version 0.3
        @namespace PhotonJS */
     var self = {
@@ -31,6 +35,12 @@ function Photon(obj) {
             name: obj.name || '',
             id: obj.id || 0,
 
+            /** Returns a url built from its arguments, by joining its arguments with a '/' and then adding the access token.
+                @memberof PhotonJS.Settings
+                @method url
+                @param {...string} url_section - The sections of the url, to be joined with a slash.
+                @returns {string} A url.
+             */
             url: function () {
                 if (this.token === '') throw new Error("Undefined token.");
                 var args = Array.prototype.slice.call(arguments);
@@ -51,20 +61,28 @@ function Photon(obj) {
             @namespace Authorization 
             @memberof PhotonJS*/
         authorization: {
-            authorize: function (tok) {
-                this.settings.token = tok;
-                if (this.settings.debug) console.debug(tok);
-                return this;
-            },
-
+            /** Lists the access tokens that you have
+                @memberof PhotonJS.Authorization
+                @method list
+                @returns {object[]} A list of access tokens.
+             */
             list: function () {
-                return $.get(this.settings.url('access_tokens'));
+                return $.get(this.settings.url('access_tokens'), identity);
             },
-
+            
+            /** 
+                @memberof PhotonJS.Authorization
+                @method url
+                @param {string} tok - The access token you want to delete.
+                @returns {boolean} True if sucessful.
+             */
             delete: function (tok) {
                 return $.ajax({
                     url: this.settings.url('access_tokens', tok),
-                    type: 'delete'
+                    type: 'delete',
+                    success: function (d) {
+                        return true;
+                    }
                 });
             }
         },
@@ -73,38 +91,50 @@ function Photon(obj) {
             @namespace Devices 
             @memberof PhotonJS*/
         devices: {
+            /** Lists all your known Photon or Particle boards.
+                @memberof PhotonJS.Devices
+                @method list
+                @returns {object[]} The devices.
+             */
             list: function () {
-                return $.get(this.settings.url('devices'));
+                return $.get(this.settings.url('devices'), identity);
             },
-
+            
+            /** Gets information about a device.
+                @memberof PhotonJS.Devices
+                @method getInfo
+                @param {number} id - The device's ID.
+                @returns {object} The device's information.
+             */
             getInfo: function (id) {
                 this.settings.save('id', id);
                 if (this.settings.debug) console.debug(id);
                 
-                return $.get(this.settings.url('devices', id));
+                return $.get(this.settings.url('devices', id), identity);
             },
-
-            makeClaimCode: function (id) {
-                this.settings.save('id', id);
-                if (this.settings.debug) console.debug(id);
-                
-                return $.post(this.settings.url('device_claims'), {});
-            },
-
+            
+            /** Gets a variable from the REST API of the device.
+                @memberof PhotonJS.Devices
+                @method get
+                @param {number} id - The device's ID.
+                @param {string} v - The variable that you want.
+                @returns {object} The variables info and value.
+             */
             get: function (id, v) {
                 this.settings.save('id', id);
                 if (this.settings.debug) console.debug(id);
                 
-                return $.get(this.settings.url('devices', id, v));
+                return $.get(this.settings.url('devices', id, v), identity);
             },
-
-            claim: function (id) {
-                this.settings.save('id', id);
-                if (this.settings.debug) console.debug(id);
-                
-                return $.post(this.settings.url('devices'), {});
-            },
-
+            
+            /** Calls a function over the device's REST API.
+                @memberof PhotonJS.Devices
+                @method call
+                @param {number} id - The device's ID.
+                @param {string} name - The function's name.
+                @param {string|number} arg - The function's argument.
+                @returns {object} Some function and device information, as well as the function's return value.
+             */
             call: function (id, name, arg) {
                 this.settings.save('id', id);
                 this.settings.save('name', name);
