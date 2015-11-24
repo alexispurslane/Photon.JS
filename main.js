@@ -391,7 +391,7 @@ function Photon(obj) {
                 if (this.settings.debug) console.debug(slug);
                 if (this.settings.debug) console.debug(pSlug);
 
-                return $.post(this.settings.url('orgs', slug, 'products', pSlug, 'device_claims'));
+                return $.post(this.settings.url('orgs', slug, 'products', pSlug, 'device_claims'), identity);
             },
 
             /** Remove a device from a product

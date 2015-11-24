@@ -4,3 +4,5 @@
 For those of us that don't want to directly deal with a REST API and all that is associated with that, and just want an easy to use and well-designed libary, this is the libary for them!
 
 For more documentation on what exactly these functions return, and how the Photon works, see [the Photon Reference Docs](https://docs.particle.io/reference/api/)
+
+Note: In the documentation, all the functions that don't seem to have return values return promises that provide information about the sucess of the request.
