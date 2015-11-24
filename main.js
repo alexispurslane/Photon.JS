@@ -58,6 +58,9 @@ function Photon(obj) {
         },
 
         /** The Authorization section largely deals with access tokens, since access tokens are largely the only way to authorize yourself with a Photon board.
+            @example
+            Photon({ token: "<your access token>" }).authorization.list();
+
             @namespace Authorization 
             @memberof PhotonJS*/
         authorization: {
@@ -88,6 +91,9 @@ function Photon(obj) {
         },
 
         /** This section deals with some of the most important aspects of the Photon, being able to access variables and funtions over the network. This section also deals with the management of multiple devices.
+            @example
+            Photon({ token: "<your access token>" }).devices.get(<The device id>, "SomeVar");
+
             @namespace Devices 
             @memberof PhotonJS*/
         devices: {
@@ -141,7 +147,7 @@ function Photon(obj) {
                 if (this.settings.debug) console.debug(id);
                 if (this.settings.debug) console.debug(name);
                 
-                return $.post(this.settings.url('devices', id, name), { arg: arg });
+                return $.post(this.settings.url('devices', id, name), { arg: arg }, identity);
             }
         },
 
@@ -187,16 +193,16 @@ function Photon(obj) {
                 if (!data) throw new Error("You must provide data to send.");
 
                 if (ttl) {
-                    if (this.settings.debug) console.debug({ data: data,
-                                                             p: p,
-                                                             ttl: ttl });
+                    if (this.settings.debug) console.debug(JSON.stringify({ data: data,
+                                                                            p: p,
+                                                                            ttl: ttl }));
                     return $.post(this.setttings.url('devices', 'events'),
                                   { data: data,
                                     p: p,
                                     ttl: ttl });
                 } else {
-                    if (this.settings.debug) console.debug({ data: data,
-                                                             p: p });
+                    if (this.settings.debug) console.debug(JSON.stringify({ data: data,
+                                                                            p: p }));
 
                     return $.post(this.setttings.url('devices', 'events'),
                                   { data: data,
