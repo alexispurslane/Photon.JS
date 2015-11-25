@@ -30,6 +30,19 @@
     return a;
 }
 
+/** Returns a new settings object with the specified arguments set up.
+ * @param {string} accessToken - The access token
+ * @param {number} [version] - The API version
+ * @param {string} [id] - The id of the device
+ * @param {boolean} [debug] - Wether to debug the device
+*/
+function Settings(accessToken, version, id, debug) {
+    debug = debug || false;
+    version = version || 1;
+    id = id || '';
+    return { token: at, version: version, id: id, debug: debug };
+}
+
 /** Returns new Photon.JS library instance, setting it up with the given options.
  * @param {object} obj The options for the new library, including a version, access token, debug mode, name of device, and id of device (all of which you can supply later).
  * @returns {object} A new library instance.
@@ -50,6 +63,7 @@ function Photon(obj) {
          *  @memberof PhotonJS
         */
         settings: {
+            baseUrl: '',
             debug: obj.debug || false,
             save: function (k, v) {
                 var s = v || this[k];
@@ -59,10 +73,8 @@ function Photon(obj) {
             },
 
             token: obj.token || '',
-            authorized: obj.authorized || false,
             version: obj.version || 1,
-            name: obj.name || '',
-            id: obj.id || 0,
+            id: obj.id || '',
 
             /** Returns a url built from its arguments, by joining its arguments with a '/' and then adding the access token.
              *  @memberof PhotonJS.Settings
@@ -94,6 +106,7 @@ function Photon(obj) {
          *  @version 0.3
         */
         authorization: {
+            settings: {},
             /** Lists the access tokens that you have
              *  @memberof PhotonJS.Authorization
              *  @method list
@@ -128,6 +141,7 @@ function Photon(obj) {
          *  @version 0.3
         */
         devices: {
+            settings: {},
             /** Lists all your known Photon or Particle boards.
              *  @memberof PhotonJS.Devices
              *  @method list
@@ -174,7 +188,6 @@ function Photon(obj) {
             */
             call: function (id, name, arg) {
                 this.settings.save('id', id);
-                this.settings.save('name', name);
                 if (this.settings.debug) console.debug(id);
                 if (this.settings.debug) console.debug(name);
 
@@ -190,6 +203,7 @@ function Photon(obj) {
          *  @version 0.3
         */
         events: {
+            settings: {},
             /** Opens a stream of "Server Sent Events" for all public events and private events for your devices.
              * @memberof PhotonJS.Events
              * @method getStream
@@ -247,7 +261,6 @@ function Photon(obj) {
              * @returns {object} Information about the event.
             */
             publish: function (name, data, p, ttl) {
-                this.settings.save('name', name);
                 if (this.settings.debug) console.debug(name);
 
                 data = data || {};
@@ -259,7 +272,7 @@ function Photon(obj) {
                     if (this.settings.debug) console.debug(JSON.stringify({ data: data,
                                                                             p: p,
                                                                             ttl: ttl }));
-                    return $.post(this.setttings.url('devices', 'events'),
+                    return $.post(this.settings.url('devices', 'events'),
                                   { data: data,
                                     p: p,
                                     ttl: ttl });
@@ -267,7 +280,7 @@ function Photon(obj) {
                     if (this.settings.debug) console.debug(JSON.stringify({ data: data,
                                                                             p: p }));
 
-                    return $.post(this.setttings.url('devices', 'events'),
+                    return $.post(this.settings.url('devices', 'events'),
                                   { data: data,
                                     p: p });
                 }
@@ -280,6 +293,7 @@ function Photon(obj) {
          * @version 0.3
         */
         firmware: {
+            settings: {},
             /** Update a board.
              * @memberof PhotonJS.Firmware
              * @method update
@@ -303,7 +317,6 @@ function Photon(obj) {
             */
             rename: function (id, name) {
                 this.settings.save('id', id);
-                this.settings.save('name', name);
 
                 if (this.settings.debug) console.debug(id);
                 if (this.settings.debug) console.debug(name);
@@ -328,7 +341,7 @@ function Photon(obj) {
                     + 'Content-Disposition: form-data; name="file";'
                     + 'filename="code.cpp"\r\n'
                     + 'Content-type: plain/text\r\n\r\n'
-                    + data + '\r\n'
+                    + file + '\r\n'
                     + '--'+ boundary + '--';
                 if (this.settings.debug) console.debug(body);
                 if (this.settings.debug) console.debug(id);
@@ -351,6 +364,7 @@ function Photon(obj) {
          *  @version 0.3
         */
         orginizations: {
+            settings: {},
             /** List your orginizations
              * @method list
              * @memberof PhotonJS.Orginizations
@@ -395,6 +409,7 @@ function Photon(obj) {
          *  @version 0.3
         */
         products: {
+            settings: {},
             /** Get an orginization via its slug, then get a product from that orginization, using another slug.
              * @method get
              * @memberof PhotonJS.Products
@@ -442,18 +457,16 @@ function Photon(obj) {
         }
     };
 
-    self.auth.settings = Photon.settings;
-    self.devices.settings = Photon.settings;
-    self.firmware.settings = Photon.settings;
-    self.products.settings = Photon.settings;
-    self.orgs.settings = Photon.settings;
+    self.authorization.settings = self.settings;
+    self.devices.settings = self.settings;
+    self.firmware.settings = self.settings;
+    self.products.settings = self.settings;
+    self.orginizations.settings = self.settings;
     self.settings.baseUrl = 'https://api.particle.io/v' + self.settings.version;
     if (obj.debug) console.debug(self.settings.baseUrl);
 
     return self;
-}
-
-</code></pre>
+}</code></pre>
         </article>
     </section>
 
@@ -463,13 +476,13 @@ function Photon(obj) {
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Namespaces</h3><ul><li><a href="PhotonJS.html">PhotonJS</a></li><li><a href="PhotonJS.Authorization.html">Authorization</a></li><li><a href="PhotonJS.Devices.html">Devices</a></li><li><a href="PhotonJS.Events.html">Events</a></li><li><a href="PhotonJS.Firmware.html">Firmware</a></li><li><a href="PhotonJS.Orginizations.html">Orginizations</a></li><li><a href="PhotonJS.Products.html">Products</a></li><li><a href="PhotonJS.Settings.html">Settings</a></li></ul><h3>Global</h3><ul><li><a href="global.html#Photon">Photon</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Namespaces</h3><ul><li><a href="PhotonJS.html">PhotonJS</a></li><li><a href="PhotonJS.Authorization.html">Authorization</a></li><li><a href="PhotonJS.Devices.html">Devices</a></li><li><a href="PhotonJS.Events.html">Events</a></li><li><a href="PhotonJS.Firmware.html">Firmware</a></li><li><a href="PhotonJS.Orginizations.html">Orginizations</a></li><li><a href="PhotonJS.Products.html">Products</a></li><li><a href="PhotonJS.Settings.html">Settings</a></li></ul><h3>Global</h3><ul><li><a href="global.html#Photon">Photon</a></li><li><a href="global.html#Settings">Settings</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Tue Nov 24 2015 12:24:18 GMT-0800 (PST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Tue Nov 24 2015 16:39:37 GMT-0800 (PST)
 </footer>
 
 <script> prettyPrint(); </script>
