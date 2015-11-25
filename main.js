@@ -2,6 +2,19 @@ function identity (a) {
     return a;
 }
 
+/** Returns a new settings object with the specified arguments set up.
+ * @param {string} accessToken - The access token
+ * @param {number} [version] - The API version
+ * @param {string} [id] - The id of the device
+ * @param {boolean} [debug] - Wether to debug the device
+*/
+function Settings(accessToken, version, id, debug) {
+    debug = debug || false;
+    version = version || 1;
+    id = id || '';
+    return { token: at, version: version, id: id, debug: debug };
+}
+
 /** Returns new Photon.JS library instance, setting it up with the given options.
  * @param {object} obj The options for the new library, including a version, access token, debug mode, name of device, and id of device (all of which you can supply later).
  * @returns {object} A new library instance.
@@ -32,10 +45,8 @@ function Photon(obj) {
             },
 
             token: obj.token || '',
-            authorized: obj.authorized || false,
             version: obj.version || 1,
-            name: obj.name || '',
-            id: obj.id || 0,
+            id: obj.id || '',
 
             /** Returns a url built from its arguments, by joining its arguments with a '/' and then adding the access token.
              *  @memberof PhotonJS.Settings
@@ -149,7 +160,6 @@ function Photon(obj) {
             */
             call: function (id, name, arg) {
                 this.settings.save('id', id);
-                this.settings.save('name', name);
                 if (this.settings.debug) console.debug(id);
                 if (this.settings.debug) console.debug(name);
 
@@ -223,7 +233,6 @@ function Photon(obj) {
              * @returns {object} Information about the event.
             */
             publish: function (name, data, p, ttl) {
-                this.settings.save('name', name);
                 if (this.settings.debug) console.debug(name);
 
                 data = data || {};
@@ -280,7 +289,6 @@ function Photon(obj) {
             */
             rename: function (id, name) {
                 this.settings.save('id', id);
-                this.settings.save('name', name);
 
                 if (this.settings.debug) console.debug(id);
                 if (this.settings.debug) console.debug(name);
