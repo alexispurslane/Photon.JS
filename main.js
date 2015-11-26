@@ -12,7 +12,7 @@ function Settings(accessToken, version, id, debug) {
     debug = debug || false;
     version = version || 1;
     id = id || '';
-    return { token: at, version: version, id: id, debug: debug };
+    return { token: accessToken, version: version, id: id, debug: debug };
 }
 
 /** Returns new Photon.JS library instance, setting it up with the given options.
